@@ -7,4 +7,5 @@ export const userRepository = {
   remove: (id) => httpClient.delete(`/usuarios/eliminar?id=${id}`),
   update: (id, payload) => httpClient.put(`/usuarios/actualizar?id=${id}`, payload),
   changePassword: (payload) => httpClient.post("/usuarios/cambiar_password", payload),
+  updatePhoto: (photoUrl) => httpClient.put("/usuarios/actualizar_foto", { photoUrl }),
 };

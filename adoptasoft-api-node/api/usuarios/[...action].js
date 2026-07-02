@@ -11,6 +11,7 @@ const handlers = {
   actualizar: require('../../handlers/usuarios/actualizar'),
   cambiar_password: require('../../handlers/usuarios/cambiar_password'),
   registrar: require('../../handlers/usuarios/registrar'),
+  actualizar_foto: require('../../handlers/usuarios/actualizar_foto'),
 };
 
 module.exports = async (req, res) => {

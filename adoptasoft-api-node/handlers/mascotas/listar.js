@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
   if (!current) return;
 
   let sql = `SELECT m.id_mascota, m.nombre, m.especie, m.raza, m.edad, m.peso, m.sexo, m.estado, m.foto_url,
-                    m.id_propietario, u.nombre AS propietario_nombre
+                    m.id_propietario, u.nombre AS propietario_nombre, u.foto_url AS propietario_foto
              FROM mascotas m
              JOIN usuarios u ON u.id_usuario = m.id_propietario`;
   const params = [];
@@ -38,6 +38,7 @@ module.exports = async (req, res) => {
     photoUrl: m.foto_url,
     ownerId: m.id_propietario,
     ownerName: m.propietario_nombre,
+    ownerPhotoUrl: m.propietario_foto,
   }));
 
   jsonResponse(res, { pets });

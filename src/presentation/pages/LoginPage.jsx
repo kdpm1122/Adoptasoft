@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { LoginForm } from "../components/forms/LoginForm";
 import { RegisterForm } from "../components/forms/RegisterForm";
+import logo from "../../assets/logo.jpeg";
 
 export function LoginPage({ onLoginSuccess }) {
   const [mode, setMode] = useState("login"); // "login" | "register"
@@ -9,7 +10,7 @@ export function LoginPage({ onLoginSuccess }) {
   return (
     <div className="flex min-h-screen w-full">
       {/* Panel izquierdo: ilustrativo */}
-      <div className="hidden flex-1 flex-col justify-between bg-warm-bg px-12 py-10 md:flex">
+      <div className="hidden flex-1 flex-col bg-warm-bg px-12 py-6 md:flex">
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl">
             🐾
@@ -19,10 +20,17 @@ export function LoginPage({ onLoginSuccess }) {
           </span>
         </div>
 
-        <div className="flex justify-center">
-          <div className="">
-            🐕🐈
-          </div>
+        <div className="flex min-h-0 flex-1 items-center justify-center py-6">
+          <img
+            src={logo}
+            alt="Adoptasoft"
+            className="h-full max-h-full w-full max-w-xl object-contain"
+            style={{
+              mixBlendMode: "multiply",
+              maskImage: "radial-gradient(circle, black 40%, transparent 70%)",
+              WebkitMaskImage: "radial-gradient(circle, black 40%, transparent 70%)",
+            }}
+          />
         </div>
 
         <div>

@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
   if (!(await requireRole(req, res, ['admin']))) return;
 
   const result = await pool.query(
-    'SELECT id_usuario, nombre, email, documento, telefono, rol, fecha_registro FROM usuarios ORDER BY fecha_registro DESC'
+    'SELECT id_usuario, nombre, email, documento, telefono, rol, fecha_registro, foto_url FROM usuarios ORDER BY fecha_registro DESC'
   );
 
   const users = result.rows.map((u) => ({
@@ -22,6 +22,7 @@ module.exports = async (req, res) => {
     role: dbRoleToFrontend(u.rol),
     subtitle: u.email + (u.documento ? ' · ' + u.documento : ''),
     registeredAt: u.fecha_registro,
+    photoUrl: u.foto_url,
   }));
 
   jsonResponse(res, { users });

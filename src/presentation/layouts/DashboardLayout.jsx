@@ -1,7 +1,7 @@
 // src/presentation/layouts/DashboardLayout.jsx
 import { useState } from "react";
 
-export function DashboardLayout({ subtitle, roleLabel, roleIcon, navItems, activeNav, onNavigate, onLogout, children }) {
+export function DashboardLayout({ subtitle, roleLabel, roleIcon, photoUrl, navItems, activeNav, onNavigate, onLogout, children }) {
   // Sidebar visible por defecto en escritorio. En móvil arranca cerrado
   // (antes ni siquiera existía la opción de abrirlo ahí).
   const [isMenuOpen, setIsMenuOpen] = useState(() => window.innerWidth >= 768);
@@ -75,8 +75,8 @@ export function DashboardLayout({ subtitle, roleLabel, roleIcon, navItems, activ
               </div>
 
               <div className="flex items-center gap-3 rounded-xl bg-primary-light/30 px-3 py-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white">
-                  {roleIcon}
+                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary text-white">
+                  {photoUrl ? <img src={photoUrl} alt={roleLabel} className="h-full w-full object-cover" /> : roleIcon}
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-text-dark">{roleLabel}</p>

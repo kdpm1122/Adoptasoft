@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
   const { email, password, role } = req.body;
   const pool = getPool();
   const result = await pool.query(
-    'SELECT id_usuario, nombre, email, password, rol FROM usuarios WHERE email = $1',
+    'SELECT id_usuario, nombre, email, password, rol, foto_url FROM usuarios WHERE email = $1',
     [email]
   );
   const usuario = result.rows[0];
@@ -32,6 +32,7 @@ module.exports = async (req, res) => {
       name: usuario.nombre,
       email: usuario.email,
       role: dbRoleToFrontend(usuario.rol),
+      photoUrl: usuario.foto_url,
     },
   });
 };
