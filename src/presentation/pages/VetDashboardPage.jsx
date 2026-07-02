@@ -16,7 +16,7 @@ import { medicalRecordRepository } from "../../infrastructure/repositories/medic
 const STATUS_STYLES = { Pendiente: "bg-yellow-100 text-yellow-700", Confirmada: "bg-green-100 text-green-700", Rechazada: "bg-red-100 text-red-600", Cancelada: "bg-gray-100 text-gray-600", Atendida: "bg-blue-100 text-blue-700" };
 const APPOINTMENT_STATUSES = ["Pendiente", "Confirmada", "Rechazada", "Cancelada", "Atendida"];
 
-export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) {
+export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser, onPhotoChange }) {
   const [activeNav, setActiveNav] = useState("inicio");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [patients, setPatients] = useState([]);
@@ -77,7 +77,7 @@ export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) 
 
   function renderSection() {
     switch (activeNav) {
-      case "perfil": return <ProfileSection user={currentUser} />;
+      case "perfil": return <ProfileSection user={currentUser} onPhotoChange={onPhotoChange} />;
       case "pacientes": return <PatientsSection patients={patients} onChangeStatus={handleChangeStatus} onViewHistory={handleViewHistory} />;
       case "mensajes": {
         const uniqueOwners = Array.from(
@@ -125,14 +125,14 @@ export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) 
 
   if (isLoading) {
     return (
-      <DashboardLayout subtitle="Panel Veterinario" roleLabel="Veterinario" roleIcon="🩺" navItems={VET_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
+      <DashboardLayout subtitle="Panel Veterinario" roleLabel="Veterinario" roleIcon="🩺" photoUrl={currentUser?.photoUrl} navItems={VET_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
         <p className="text-text-muted">Cargando datos...</p>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout subtitle="Panel Veterinario" roleLabel="Veterinario" roleIcon="🩺" navItems={VET_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
+    <DashboardLayout subtitle="Panel Veterinario" roleLabel="Veterinario" roleIcon="🩺" photoUrl={currentUser?.photoUrl} navItems={VET_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
       {loadError && <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">No se pudieron cargar los datos: {loadError}</div>}
       {activeNav === "inicio" && (
         <>

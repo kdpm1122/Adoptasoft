@@ -33,7 +33,7 @@ function daysUntil(dateStr) {
   return Math.round((target - today) / (1000 * 60 * 60 * 24));
 }
 
-export function OwnerDashboardPage({ onLogout, currentUser }) {
+export function OwnerDashboardPage({ onLogout, currentUser, onPhotoChange }) {
   const [activeNav, setActiveNav] = useState("inicio");
   const [pets, setPets] = useState([]);
   const [vets, setVets] = useState([]);
@@ -121,7 +121,7 @@ export function OwnerDashboardPage({ onLogout, currentUser }) {
     switch (activeNav) {
       case "mascotas": return <PetsSection pets={pets} onCreatePet={handleCreatePet} onUploadPhoto={handleUploadPetPhoto} />;
       case "citas": return <AppointmentsSection pets={pets} vets={vets} appointments={appointments} onConfirm={handleConfirmAppointment} canRate onRated={(id, stars) => setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, rating: stars } : a)))} />;
-      case "perfil": return <ProfileSection user={currentUser} />;
+      case "perfil": return <ProfileSection user={currentUser} onPhotoChange={onPhotoChange} />;
       case "mensajes":
         return <MessagesSection contacts={vets.map((v) => ({ id: v.id, name: v.name, role: "vet" }))} />;
       case "historial":
@@ -154,14 +154,14 @@ export function OwnerDashboardPage({ onLogout, currentUser }) {
 
   if (isLoading) {
     return (
-      <DashboardLayout subtitle="Gestión de Mascotas" roleLabel="Dueño" roleIcon="🐶" navItems={OWNER_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
+      <DashboardLayout subtitle="Gestión de Mascotas" roleLabel="Dueño" roleIcon="🐶" photoUrl={currentUser?.photoUrl} navItems={OWNER_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
         <p className="text-text-muted">Cargando datos...</p>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout subtitle="Gestión de Mascotas" roleLabel="Dueño" roleIcon="🐶" navItems={OWNER_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
+    <DashboardLayout subtitle="Gestión de Mascotas" roleLabel="Dueño" roleIcon="🐶" photoUrl={currentUser?.photoUrl} navItems={OWNER_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
       {loadError && <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">No se pudieron cargar los datos: {loadError}</div>}
       {activeNav === "inicio" && (
         <>

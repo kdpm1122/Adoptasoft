@@ -17,10 +17,14 @@ function App() {
     setCurrentUser(null);
   }
 
+  function handlePhotoChange(photoUrl) {
+    setCurrentUser((prev) => (prev ? { ...prev, photoUrl } : prev));
+  }
+
   if (!currentUser) return <LoginPage onLoginSuccess={handleLoginSuccess} />;
-  if (currentUser.role === ROLES.VET) return <VetDashboardPage doctorName={currentUser.name} currentUser={currentUser} onLogout={handleLogout} />;
-  if (currentUser.role === ROLES.ADMIN) return <AdminDashboardPage currentUser={currentUser} onLogout={handleLogout} />;
-  return <OwnerDashboardPage currentUser={currentUser} onLogout={handleLogout} />;
+  if (currentUser.role === ROLES.VET) return <VetDashboardPage doctorName={currentUser.name} currentUser={currentUser} onLogout={handleLogout} onPhotoChange={handlePhotoChange} />;
+  if (currentUser.role === ROLES.ADMIN) return <AdminDashboardPage currentUser={currentUser} onLogout={handleLogout} onPhotoChange={handlePhotoChange} />;
+  return <OwnerDashboardPage currentUser={currentUser} onLogout={handleLogout} onPhotoChange={handlePhotoChange} />;
 }
 
 export default App;

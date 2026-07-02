@@ -15,7 +15,7 @@ import { vetRepository } from "../../infrastructure/repositories/vetRepository";
 import { petRepository } from "../../infrastructure/repositories/petRepository";
 import { appointmentRepository } from "../../infrastructure/repositories/appointmentRepository";
 
-export function AdminDashboardPage({ onLogout, currentUser }) {
+export function AdminDashboardPage({ onLogout, currentUser, onPhotoChange }) {
   const [activeNav, setActiveNav] = useState("inicio");
   const [users, setUsers] = useState([]);
   const [vets, setVets] = useState([]);
@@ -69,7 +69,7 @@ export function AdminDashboardPage({ onLogout, currentUser }) {
       case "reportes":
         return <ReportsSection pets={pets} appointments={appointments} vets={vets} />;
       case "perfil":
-        return <ProfileSection user={currentUser} />;
+        return <ProfileSection user={currentUser} onPhotoChange={onPhotoChange} />;
       default:
         return null;
     }
@@ -77,7 +77,7 @@ export function AdminDashboardPage({ onLogout, currentUser }) {
 
   if (isLoading) {
     return (
-      <DashboardLayout subtitle="Panel de Administración" roleLabel="Administrador" roleIcon="🛡️"
+      <DashboardLayout subtitle="Panel de Administración" roleLabel="Administrador" roleIcon="🛡️" photoUrl={currentUser?.photoUrl}
         navItems={ADMIN_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
         <p className="text-text-muted">Cargando datos...</p>
       </DashboardLayout>
@@ -85,7 +85,7 @@ export function AdminDashboardPage({ onLogout, currentUser }) {
   }
 
   return (
-    <DashboardLayout subtitle="Panel de Administración" roleLabel="Administrador" roleIcon="🛡️"
+    <DashboardLayout subtitle="Panel de Administración" roleLabel="Administrador" roleIcon="🛡️" photoUrl={currentUser?.photoUrl}
       navItems={ADMIN_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
       {loadError && <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">No se pudieron cargar los datos: {loadError}</div>}
       {activeNav === "inicio" && (
