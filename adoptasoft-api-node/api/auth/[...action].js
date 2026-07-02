@@ -7,6 +7,7 @@ function getAction(req) {
 const handlers = {
   login: require('../../handlers/auth/login'),
   logout: require('../../handlers/auth/logout'),
+  google: require('../../handlers/auth/google'),
 };
 
 module.exports = async (req, res) => {

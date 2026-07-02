@@ -1,9 +1,13 @@
 // src/presentation/components/forms/LoginForm.jsx
+import { useEffect, useRef } from "react";
 import { useLogin } from "../../../application/hooks/useLogin";
 import { ROLES } from "../../../domain/entities/User";
+import { authRepository } from "../../../infrastructure/repositories/authRepository";
 import { RoleCard } from "../ui/RoleCard";
 import { TextField } from "../ui/TextField";
 import { Button } from "../ui/Button";
+
+const GOOGLE_CLIENT_ID = "840053752885-ume640ihe181dnmj473vnbq8c0egks6o.apps.googleusercontent.com";
 
 const ROLE_OPTIONS = [
   { value: ROLES.OWNER, label: "Dueño", icon: "🐶" },
@@ -11,14 +15,59 @@ const ROLE_OPTIONS = [
   { value: ROLES.ADMIN, label: "Admin", icon: "🛡️" },
 ];
 
-export function LoginForm({ onLoginSuccess }) {
+export function LoginForm({ onLoginSuccess, onGoToRegister }) {
   const { formData, setField, errors, isLoading, apiError, submit } = useLogin();
+  const googleButtonRef = useRef(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
     const result = await submit();
     if (result.success) onLoginSuccess?.(result.user);
   }
+
+  useEffect(() => {
+    let cancelled = false;
+    let intervalId = null;
+
+    function renderGoogleButton() {
+      if (!window.google || !googleButtonRef.current) return false;
+
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: async (response) => {
+          try {
+            const user = await authRepository.loginWithGoogle(response.credential);
+            onLoginSuccess?.(user);
+          } catch (err) {
+            console.error("Error al iniciar sesión con Google:", err.message);
+          }
+        },
+      });
+
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: "outline",
+        size: "large",
+        width: 400,
+        text: "continue_with",
+        locale: "es",
+      });
+
+      return true;
+    }
+
+    if (!renderGoogleButton() && !cancelled) {
+      intervalId = setInterval(() => {
+        if (renderGoogleButton() && intervalId) {
+          clearInterval(intervalId);
+        }
+      }, 300);
+    }
+
+    return () => {
+      cancelled = true;
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [onLoginSuccess]);
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-6">
@@ -79,13 +128,11 @@ export function LoginForm({ onLoginSuccess }) {
         <span className="h-px flex-1 bg-border" />
       </div>
 
-      <Button type="button" variant="secondary" onClick={() => console.log("Google sign-in")}>
-        🔵 Continuar con Google
-      </Button>
+      <div ref={googleButtonRef} className="flex justify-center" />
 
-      <a href="/register" className="text-center text-sm font-semibold text-primary hover:underline">
+      <button type="button" onClick={onGoToRegister} className="text-center text-sm font-semibold text-primary hover:underline">
         Crear cuenta nueva
-      </a>
+      </button>
     </form>
   );
 }

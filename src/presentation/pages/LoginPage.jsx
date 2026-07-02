@@ -1,7 +1,11 @@
 // src/presentation/pages/LoginPage.jsx
+import { useState } from "react";
 import { LoginForm } from "../components/forms/LoginForm";
+import { RegisterForm } from "../components/forms/RegisterForm";
 
 export function LoginPage({ onLoginSuccess }) {
+  const [mode, setMode] = useState("login"); // "login" | "register"
+
   return (
     <div className="flex min-h-screen w-full">
       {/* Panel izquierdo: ilustrativo */}
@@ -35,7 +39,11 @@ export function LoginPage({ onLoginSuccess }) {
 
       {/* Panel derecho: formulario */}
       <div className="flex flex-1 items-center justify-center bg-white px-6 py-10">
-        <LoginForm onLoginSuccess={onLoginSuccess} />
+        {mode === "login" ? (
+          <LoginForm onLoginSuccess={onLoginSuccess} onGoToRegister={() => setMode("register")} />
+        ) : (
+          <RegisterForm onRegisterSuccess={onLoginSuccess} onBackToLogin={() => setMode("login")} />
+        )}
       </div>
     </div>
   );

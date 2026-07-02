@@ -10,6 +10,7 @@ const handlers = {
   eliminar: require('../../handlers/usuarios/eliminar'),
   actualizar: require('../../handlers/usuarios/actualizar'),
   cambiar_password: require('../../handlers/usuarios/cambiar_password'),
+  registrar: require('../../handlers/usuarios/registrar'),
 };
 
 module.exports = async (req, res) => {
