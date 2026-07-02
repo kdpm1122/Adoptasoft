@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
 const { getPool } = require('../../lib/db');
 const { handleOptions, jsonResponse, jsonError, requireMethod, requireFields } = require('../../lib/response');
 const { requireRole } = require('../../lib/auth');
@@ -27,18 +26,19 @@ module.exports = async (req, res) => {
   const pool = getPool();
   const current = await requireRole(req, res, ['admin']);
   if (!current) return;
-  if (!requireFields(req, res, ['name', 'email', 'specialty', 'clinic'])) return;
+  if (!requireFields(req, res, ['name', 'email', 'specialty', 'clinic', 'password'])) return;
 
   const body = req.body;
+  if (body.password.length < 6) return jsonError(res, 'La contraseña debe tener al menos 6 caracteres.', 422);
+
   const existing = await pool.query('SELECT id_usuario FROM usuarios WHERE email = $1', [body.email]);
   if (existing.rows.length > 0) return jsonError(res, 'Ya existe un usuario con ese correo.', 409);
 
   const client = await pool.connect();
-  let idUsuario, tempPassword;
+  let idUsuario;
   try {
     await client.query('BEGIN');
-    tempPassword = crypto.randomBytes(4).toString('hex').slice(0, 8);
-    const hashedPassword = bcrypt.hashSync(tempPassword, 10);
+    const hashedPassword = bcrypt.hashSync(body.password, 10);
 
     const userResult = await client.query(
       `INSERT INTO usuarios (nombre, email, telefono, password, rol)
@@ -70,6 +70,5 @@ module.exports = async (req, res) => {
     scheduleStart: body.scheduleStart || '8:00 a.m.',
     scheduleEnd: body.scheduleEnd || '5:00 p.m.',
     status: 'Activo',
-    temporaryPassword: tempPassword,
   }, 201);
 };

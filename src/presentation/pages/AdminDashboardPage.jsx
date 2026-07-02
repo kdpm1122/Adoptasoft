@@ -61,7 +61,7 @@ export function AdminDashboardPage({ onLogout, currentUser }) {
               <h1 className="text-2xl font-bold text-text-dark">👥 Usuarios</h1>
               <p className="text-text-muted">Gestión de todos los usuarios del sistema</p>
             </div>
-            <CreateUserForm initialUsers={users} />
+            <CreateUserForm initialUsers={users} currentUserId={currentUser.id} />
           </>
         );
       case "veterinarios":

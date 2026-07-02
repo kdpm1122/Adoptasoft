@@ -1,17 +1,35 @@
 // src/presentation/components/forms/CreateUserForm.jsx
+import { useState } from "react";
 import { useUserManagement } from "../../../application/hooks/useUserManagement";
 import { ROLES } from "../../../domain/entities/User";
 import { TextField } from "../ui/TextField";
 import { Button } from "../ui/Button";
 import { UserListItem } from "../ui/UserListItem";
 
-export function CreateUserForm({ initialUsers }) {
-  const { users, formData, setField, errors, isLoading, createUser } = useUserManagement(initialUsers);
+export function CreateUserForm({ initialUsers, currentUserId }) {
+  const { users, formData, setField, errors, isLoading, createUser, deleteUser } = useUserManagement(initialUsers);
+  const [search, setSearch] = useState("");
+  const [deleteError, setDeleteError] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
     await createUser();
   }
+
+  async function handleDelete(id) {
+    setDeleteError(null);
+    try {
+      await deleteUser(id);
+    } catch (err) {
+      setDeleteError(err.message);
+    }
+  }
+
+  const filteredUsers = users.filter((u) => {
+    const term = search.trim().toLowerCase();
+    if (!term) return true;
+    return u.name?.toLowerCase().includes(term) || u.subtitle?.toLowerCase().includes(term);
+  });
 
   return (
     <div className="flex flex-col gap-8">
@@ -40,10 +58,31 @@ export function CreateUserForm({ initialUsers }) {
         </div>
       </form>
       <div>
-        <p className="mb-3 text-xs font-semibold tracking-wide text-text-muted">USUARIOS REGISTRADOS</p>
+        <div className="mb-3 flex items-center justify-between gap-4">
+          <p className="text-xs font-semibold tracking-wide text-text-muted">USUARIOS REGISTRADOS</p>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre o correo..."
+            className="w-64 rounded-lg border border-border bg-warm-cream px-3 py-2 text-xs text-text-dark placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-light"
+          />
+        </div>
+        {deleteError && <p className="mb-2 text-xs text-red-500">{deleteError}</p>}
         <div className="flex flex-col gap-3">
-          {users.map((u) => (
-            <UserListItem key={u.id} icon={u.role === "veterinario" ? "🩺" : "👤"} name={u.name} subtitle={u.subtitle} role={u.role} />
+          {filteredUsers.length === 0 && (
+            <p className="text-xs text-text-muted">No se encontraron usuarios.</p>
+          )}
+          {filteredUsers.map((u) => (
+            <UserListItem
+              key={u.id}
+              icon={u.role === "veterinario" ? "🩺" : "👤"}
+              name={u.name}
+              subtitle={u.subtitle}
+              role={u.role}
+              onDelete={() => handleDelete(u.id)}
+              disableDelete={String(u.id) === String(currentUserId)}
+            />
           ))}
         </div>
       </div>

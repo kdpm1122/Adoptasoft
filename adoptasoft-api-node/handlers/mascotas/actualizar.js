@@ -2,7 +2,7 @@ const { getPool } = require('../../lib/db');
 const { handleOptions, jsonResponse, jsonError, requireMethod } = require('../../lib/response');
 const { requireAuth } = require('../../lib/auth');
 
-const MAP = { nombre: 'name', especie: 'species', raza: 'breed', edad: 'age', peso: 'weight', sexo: 'sex', estado: 'status' };
+const MAP = { nombre: 'name', especie: 'species', raza: 'breed', edad: 'age', peso: 'weight', sexo: 'sex', estado: 'status', foto_url: 'photoUrl' };
 
 module.exports = async (req, res) => {
   if (handleOptions(req, res)) return;

@@ -32,5 +32,10 @@ export function useUserManagement(initialUsers = []) {
     }
   }, [formData]);
 
-  return { users, formData, setField, errors, isLoading, createUser };
+  const deleteUser = useCallback(async (id) => {
+    await userRepository.remove(id);
+    setUsers((prev) => prev.filter((u) => String(u.id) !== String(id)));
+  }, []);
+
+  return { users, formData, setField, errors, isLoading, createUser, deleteUser };
 }

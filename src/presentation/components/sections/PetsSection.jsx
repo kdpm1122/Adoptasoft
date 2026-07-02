@@ -2,7 +2,7 @@
 import { PetRegisterForm } from "../forms/PetRegisterForm";
 import { PetListItem } from "../ui/PetListItem";
 
-export function PetsSection({ pets, onCreatePet }) {
+export function PetsSection({ pets, onCreatePet, onUploadPhoto }) {
   return (
     <div>
       <div className="mb-4">
@@ -15,7 +15,7 @@ export function PetsSection({ pets, onCreatePet }) {
       <p className="mb-2 mt-6 text-xs font-semibold tracking-wide text-text-muted">MIS MASCOTAS</p>
       <div className="flex flex-col gap-3">
         {pets.map((pet) => (
-          <PetListItem key={pet.id} pet={pet} />
+          <PetListItem key={pet.id} pet={pet} onUploadPhoto={onUploadPhoto} />
         ))}
       </div>
     </div>

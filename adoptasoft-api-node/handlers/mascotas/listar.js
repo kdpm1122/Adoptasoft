@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
   const current = await requireAuth(req, res);
   if (!current) return;
 
-  let sql = `SELECT m.id_mascota, m.nombre, m.especie, m.raza, m.edad, m.peso, m.sexo, m.estado,
+  let sql = `SELECT m.id_mascota, m.nombre, m.especie, m.raza, m.edad, m.peso, m.sexo, m.estado, m.foto_url,
                     m.id_propietario, u.nombre AS propietario_nombre
              FROM mascotas m
              JOIN usuarios u ON u.id_usuario = m.id_propietario`;
@@ -35,6 +35,7 @@ module.exports = async (req, res) => {
     weight: m.peso !== null ? parseFloat(m.peso) : null,
     sex: m.sexo,
     status: m.estado,
+    photoUrl: m.foto_url,
     ownerId: m.id_propietario,
     ownerName: m.propietario_nombre,
   }));

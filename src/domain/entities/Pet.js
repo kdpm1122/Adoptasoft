@@ -7,7 +7,7 @@ export const PET_STATUS = {
 };
 
 export class Pet {
-  constructor({ id, name, species, breed, age, weight, sex, ownerId, status = PET_STATUS.ACTIVE }) {
+  constructor({ id, name, species, breed, age, weight, sex, ownerId, status = PET_STATUS.ACTIVE, photoUrl = null }) {
     this.id = id;
     this.name = name;
     this.species = species;
@@ -17,6 +17,7 @@ export class Pet {
     this.sex = sex;
     this.ownerId = ownerId;
     this.status = status;
+    this.photoUrl = photoUrl;
   }
 
   summaryLine() {

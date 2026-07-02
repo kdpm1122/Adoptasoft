@@ -64,6 +64,11 @@ export function OwnerDashboardPage({ onLogout, currentUser }) {
     setPets((prev) => [...prev, new Pet(created)]);
   }
 
+  async function handleUploadPetPhoto(petId, photoUrl) {
+    await petRepository.update(petId, { photoUrl });
+    setPets((prev) => prev.map((p) => (String(p.id) === String(petId) ? new Pet({ ...p, photoUrl }) : p)));
+  }
+
   async function handleConfirmAppointment(formData) {
     const created = await appointmentRepository.create(formData);
     const pet = pets.find((p) => String(p.id) === String(formData.petId));
@@ -73,7 +78,7 @@ export function OwnerDashboardPage({ onLogout, currentUser }) {
 
   function renderSection() {
     switch (activeNav) {
-      case "mascotas": return <PetsSection pets={pets} onCreatePet={handleCreatePet} />;
+      case "mascotas": return <PetsSection pets={pets} onCreatePet={handleCreatePet} onUploadPhoto={handleUploadPetPhoto} />;
       case "citas": return <AppointmentsSection pets={pets} vets={vets} appointments={appointments} takenSlots={appointments.map((a) => a.time)} onConfirm={handleConfirmAppointment} />;
       case "perfil": return <ProfileSection user={currentUser} />;
       case "mensajes":
