@@ -27,13 +27,13 @@ module.exports = async (req, res) => {
   const { email, name } = payload;
   if (!email) return jsonError(res, 'Google no devolvió un correo válido.', 422);
 
-  let result = await pool.query('SELECT id_usuario, nombre, email, rol FROM usuarios WHERE email = $1', [email]);
+  let result = await pool.query('SELECT id_usuario, nombre, email, rol, foto_url FROM usuarios WHERE email = $1', [email]);
   let usuario = result.rows[0];
 
   if (!usuario) {
     const insertResult = await pool.query(
       `INSERT INTO usuarios (nombre, email, password, rol)
-       VALUES ($1, $2, $3, 'owner') RETURNING id_usuario, nombre, email, rol`,
+       VALUES ($1, $2, $3, 'owner') RETURNING id_usuario, nombre, email, rol, foto_url`,
       [name || email.split('@')[0], email, 'google-oauth-no-password']
     );
     usuario = insertResult.rows[0];
@@ -48,6 +48,7 @@ module.exports = async (req, res) => {
       name: usuario.nombre,
       email: usuario.email,
       role: dbRoleToFrontend(usuario.rol),
+      photoUrl: usuario.foto_url,
     },
   });
 };
