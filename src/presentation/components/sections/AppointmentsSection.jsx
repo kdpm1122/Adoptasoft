@@ -2,7 +2,7 @@
 import { AppointmentForm } from "../forms/AppointmentForm";
 import { AppointmentListItem } from "../ui/AppointmentListItem";
 
-export function AppointmentsSection({ pets, vets, appointments, takenSlots, onConfirm }) {
+export function AppointmentsSection({ pets, vets, appointments, takenSlots, onConfirm, canRate, onRated }) {
   return (
     <div>
       <div className="mb-4">
@@ -15,7 +15,7 @@ export function AppointmentsSection({ pets, vets, appointments, takenSlots, onCo
       <p className="mb-2 mt-6 text-xs font-semibold tracking-wide text-text-muted">MIS CITAS</p>
       <div className="flex flex-col gap-3">
         {appointments.map((appt) => (
-          <AppointmentListItem key={appt.id} appointment={appt} />
+          <AppointmentListItem key={appt.id} appointment={appt} canRate={canRate} onRated={onRated} />
         ))}
       </div>
     </div>

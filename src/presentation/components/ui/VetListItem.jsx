@@ -9,6 +9,11 @@ export function VetListItem({ vet }) {
         <div>
           <p className="font-semibold text-text-dark">{vet.name}</p>
           <p className="text-xs text-text-muted">{vet.summaryLine ? vet.summaryLine() : vet.specialty}</p>
+          {vet.rating != null && (
+            <p className="text-xs text-yellow-600">
+              ⭐ {vet.rating} ({vet.ratingCount} {vet.ratingCount === 1 ? "reseña" : "reseñas"})
+            </p>
+          )}
         </div>
       </div>
       <StatusBadge status={vet.status} />

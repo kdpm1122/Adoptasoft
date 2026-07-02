@@ -37,5 +37,11 @@ export function useUserManagement(initialUsers = []) {
     setUsers((prev) => prev.filter((u) => String(u.id) !== String(id)));
   }, []);
 
-  return { users, formData, setField, errors, isLoading, createUser, deleteUser };
+  const updateUser = useCallback(async (id, payload) => {
+    const updated = await userRepository.update(id, payload);
+    setUsers((prev) => prev.map((u) => (String(u.id) === String(id) ? { ...u, ...updated } : u)));
+    return updated;
+  }, []);
+
+  return { users, formData, setField, errors, isLoading, createUser, deleteUser, updateUser };
 }

@@ -8,6 +8,7 @@ const handlers = {
   listar: require('../../handlers/usuarios/listar'),
   crear: require('../../handlers/usuarios/crear'),
   eliminar: require('../../handlers/usuarios/eliminar'),
+  actualizar: require('../../handlers/usuarios/actualizar'),
   cambiar_password: require('../../handlers/usuarios/cambiar_password'),
 };
 

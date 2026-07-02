@@ -21,7 +21,9 @@ module.exports = async (req, res) => {
 
   const result = await pool.query(
     `SELECT u.id_usuario, u.nombre, vp.especialidad, vp.clinica, vp.registro_medico,
-            vp.horario_inicio, vp.horario_fin, vp.estado
+            vp.horario_inicio, vp.horario_fin, vp.estado,
+            (SELECT ROUND(AVG(estrellas)::numeric, 1) FROM calificaciones WHERE id_veterinario = u.id_usuario) AS promedio,
+            (SELECT COUNT(*) FROM calificaciones WHERE id_veterinario = u.id_usuario) AS total_calificaciones
      FROM usuarios u
      JOIN veterinarios_perfil vp ON vp.id_usuario = u.id_usuario
      WHERE u.rol = 'vet'
@@ -37,6 +39,8 @@ module.exports = async (req, res) => {
     scheduleStart: timeToScheduleLabel(v.horario_inicio),
     scheduleEnd: timeToScheduleLabel(v.horario_fin),
     status: v.estado,
+    rating: v.promedio !== null ? parseFloat(v.promedio) : null,
+    ratingCount: parseInt(v.total_calificaciones),
   }));
 
   jsonResponse(res, { vets });

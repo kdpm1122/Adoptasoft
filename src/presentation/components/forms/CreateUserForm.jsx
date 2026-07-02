@@ -7,13 +7,17 @@ import { Button } from "../ui/Button";
 import { UserListItem } from "../ui/UserListItem";
 
 export function CreateUserForm({ initialUsers, currentUserId }) {
-  const { users, formData, setField, errors, isLoading, createUser, deleteUser } = useUserManagement(initialUsers);
+  const { users, formData, setField, errors, isLoading, createUser, deleteUser, updateUser } = useUserManagement(initialUsers);
   const [search, setSearch] = useState("");
   const [deleteError, setDeleteError] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
     await createUser();
+  }
+
+  async function handleUpdate(id, payload) {
+    return updateUser(id, payload);
   }
 
   async function handleDelete(id) {
@@ -80,6 +84,10 @@ export function CreateUserForm({ initialUsers, currentUserId }) {
               name={u.name}
               subtitle={u.subtitle}
               role={u.role}
+              email={u.email}
+              document={u.document}
+              phone={u.phone}
+              onUpdate={(payload) => handleUpdate(u.id, payload)}
               onDelete={() => handleDelete(u.id)}
               disableDelete={String(u.id) === String(currentUserId)}
             />
