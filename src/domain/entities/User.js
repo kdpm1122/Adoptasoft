@@ -7,11 +7,12 @@ export const ROLES = Object.freeze({
 });
 
 export class User {
-  constructor({ id, email, role, name }) {
+  constructor({ id, email, role, name, photoUrl }) {
     this.id = id;
     this.email = email;
     this.role = role;
     this.name = name;
+    this.photoUrl = photoUrl;
   }
 
   isOwner() {

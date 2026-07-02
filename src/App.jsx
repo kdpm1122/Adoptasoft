@@ -8,7 +8,7 @@ import { ROLES } from "./domain/entities/User";
 import { authRepository } from "./infrastructure/repositories/authRepository";
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => authRepository.getStoredUser());
 
   function handleLoginSuccess(user) { setCurrentUser(user); }
 
@@ -18,7 +18,12 @@ function App() {
   }
 
   function handlePhotoChange(photoUrl) {
-    setCurrentUser((prev) => (prev ? { ...prev, photoUrl } : prev));
+    setCurrentUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, photoUrl };
+      authRepository.saveUser(updated);
+      return updated;
+    });
   }
 
   if (!currentUser) return <LoginPage onLoginSuccess={handleLoginSuccess} />;
