@@ -6,6 +6,7 @@ function getAction(req) {
 
 const handlers = {
   crear: require('../../handlers/calificaciones/crear'),
+  listar: require('../../handlers/calificaciones/listar'),
 };
 
 module.exports = async (req, res) => {

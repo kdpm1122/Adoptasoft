@@ -52,6 +52,8 @@ export class Veterinarian {
     scheduleStart,
     scheduleEnd,
     status = VET_STATUS.ACTIVE,
+    rating = null,
+    ratingCount = 0,
   }) {
     this.id = id;
     this.name = name;
@@ -61,6 +63,8 @@ export class Veterinarian {
     this.scheduleStart = scheduleStart;
     this.scheduleEnd = scheduleEnd;
     this.status = status;
+    this.rating = rating;
+    this.ratingCount = ratingCount;
   }
 
   // Nota: el formulario no pide días de la semana todavía, por eso queda fijo "Lun–Vie".

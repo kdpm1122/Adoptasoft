@@ -14,6 +14,7 @@ import { appointmentRepository } from "../../infrastructure/repositories/appoint
 import { medicalRecordRepository } from "../../infrastructure/repositories/medicalRecordRepository";
 
 const STATUS_STYLES = { Pendiente: "bg-yellow-100 text-yellow-700", Confirmada: "bg-green-100 text-green-700", Rechazada: "bg-red-100 text-red-600", Cancelada: "bg-gray-100 text-gray-600", Atendida: "bg-blue-100 text-blue-700" };
+const APPOINTMENT_STATUSES = ["Pendiente", "Confirmada", "Rechazada", "Cancelada", "Atendida"];
 
 export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) {
   const [activeNav, setActiveNav] = useState("inicio");
@@ -59,6 +60,11 @@ export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) 
     await petRepository.update(patientId, { status });
   }
 
+  async function handleChangeAppointmentStatus(appointmentId, status) {
+    setAppointments((prev) => prev.map((a) => (a.id === appointmentId ? { ...a, status } : a)));
+    await appointmentRepository.update(appointmentId, { status });
+  }
+
   function handleViewHistory(patientId) { setSelectedPatientId(String(patientId)); setActiveNav("registrar"); }
 
   async function handleSaveRecord(formData) {
@@ -80,7 +86,7 @@ export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) 
         return <MessagesSection contacts={uniqueOwners} />;
       }
       case "registrar":
-        return <RegisterConsultSection patients={patients} selectedPatientId={selectedPatientId} onPatientChange={setSelectedPatientId} records={records} onSave={handleSaveRecord} onCancel={() => setSelectedPatientId("")} />;
+        return <RegisterConsultSection patients={patients} selectedPatientId={selectedPatientId} onPatientChange={setSelectedPatientId} records={records} onSave={handleSaveRecord} onCancel={() =>setSelectedPatientId("")} />;
       case "agenda":
         return (
           <div className="rounded-xl bg-white p-6 shadow-sm">
@@ -99,7 +105,15 @@ export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) 
                       <p className="text-xs text-text-muted">{appt.type} {appt.reason ? `· ${appt.reason}` : ""}</p>
                     </div>
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[appt.status] || ""}`}>{appt.status}</span>
+                  <select
+                    value={appt.status}
+                    onChange={(e) => handleChangeAppointmentStatus(appt.id, e.target.value)}
+                    className={`rounded-full border-0 px-3 py-1 text-xs font-semibold ${STATUS_STYLES[appt.status] || ""}`}
+                  >
+                    {APPOINTMENT_STATUSES.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
                 </div>
               ))}
             </div>
