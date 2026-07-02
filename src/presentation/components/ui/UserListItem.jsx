@@ -61,7 +61,7 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
 
   if (isEditing) {
     return (
-      <div className="rounded-xl border border-primary-light bg-warm-cream/50 px-4 py-3">
+      <div className="rounded-xl border border-primary-light bg-warm-cream/50 px-4 py-3 shadow-card">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
           <Field label="Nombre">
             <input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })}
@@ -94,7 +94,7 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
             Cancelar
           </button>
           <button type="button" onClick={handleSave} disabled={isSaving}
-            className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary-dark disabled:opacity-60">
+            className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white shadow-soft hover:bg-primary-dark hover:shadow-soft-lg disabled:opacity-60">
             {isSaving ? "Guardando..." : "Guardar"}
           </button>
         </div>
@@ -103,7 +103,7 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
   }
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-border px-4 py-3">
+    <div className="flex items-center justify-between rounded-xl border border-border bg-white px-4 py-3 shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover">
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-warm-cream text-lg">
           {icon}

@@ -1,6 +1,8 @@
 // src/presentation/pages/OwnerDashboardPage.jsx
 import { useState, useEffect } from "react";
+import { PawPrint, CalendarClock, ShieldCheck, Syringe, CalendarPlus, ClipboardList, MessageCircle, Plus } from "lucide-react";
 import { DashboardLayout } from "../layouts/DashboardLayout";
+import { LoadingState } from "../components/ui/LoadingState";
 import { StatCard } from "../components/ui/StatCard";
 import { QuickAccessCard } from "../components/ui/QuickAccessCard";
 import { PetsSection } from "../components/sections/PetsSection";
@@ -33,7 +35,12 @@ function daysUntil(dateStr) {
   return Math.round((target - today) / (1000 * 60 * 60 * 24));
 }
 
-export function OwnerDashboardPage({ onLogout, currentUser, onPhotoChange }) {
+function formatToday() {
+  const str = new Date().toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function OwnerDashboardPage({ onLogout, currentUser }) {
   const [activeNav, setActiveNav] = useState("inicio");
   const [pets, setPets] = useState([]);
   const [vets, setVets] = useState([]);
@@ -116,12 +123,13 @@ export function OwnerDashboardPage({ onLogout, currentUser, onPhotoChange }) {
   }
 
   const selectedPet = pets.find((p) => String(p.id) === String(selectedPetId));
+  const firstName = (currentUser?.name || "").split(" ")[0] || "de nuevo";
 
   function renderSection() {
     switch (activeNav) {
       case "mascotas": return <PetsSection pets={pets} onCreatePet={handleCreatePet} onUploadPhoto={handleUploadPetPhoto} />;
       case "citas": return <AppointmentsSection pets={pets} vets={vets} appointments={appointments} onConfirm={handleConfirmAppointment} canRate onRated={(id, stars) => setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, rating: stars } : a)))} />;
-      case "perfil": return <ProfileSection user={currentUser} onPhotoChange={onPhotoChange} />;
+      case "perfil": return <ProfileSection user={currentUser} />;
       case "mensajes":
         return <MessagesSection contacts={vets.map((v) => ({ id: v.id, name: v.name, role: "vet" }))} />;
       case "historial":
@@ -140,12 +148,16 @@ export function OwnerDashboardPage({ onLogout, currentUser, onPhotoChange }) {
       default:
         return (
           <>
-            <p className="mb-3 text-xs font-semibold tracking-wide text-text-muted">ACCESOS RÁPIDOS</p>
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-wide text-text-muted">
+              <span className="h-px flex-1 bg-border" />
+              ACCESOS RÁPIDOS
+              <span className="h-px flex-1 bg-border" />
+            </p>
             <div className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <QuickAccessCard icon="🐾" title="Mis Mascotas" description="Gestiona tus animales" onClick={() => setActiveNav("mascotas")} />
-              <QuickAccessCard icon="📅" title="Agendar Cita" description="Selecciona turno disponible" highlighted onClick={() => setActiveNav("citas")} />
-              <QuickAccessCard icon="📋" title="Historial Médico" description="Vacunas y diagnósticos" onClick={() => setActiveNav("historial")} />
-              <QuickAccessCard icon="💬" title="Chat con Veterinario" description="Consultas en línea" onClick={() => setActiveNav("mensajes")} />
+              <QuickAccessCard icon={<PawPrint className="h-5 w-5" strokeWidth={2.25} />} title="Mis Mascotas" description="Gestiona tus animales" onClick={() => setActiveNav("mascotas")} />
+              <QuickAccessCard icon={<CalendarPlus className="h-5 w-5" strokeWidth={2.25} />} title="Agendar Cita" description="Selecciona turno disponible" highlighted onClick={() => setActiveNav("citas")} />
+              <QuickAccessCard icon={<ClipboardList className="h-5 w-5" strokeWidth={2.25} />} title="Historial Médico" description="Vacunas y diagnósticos" onClick={() => setActiveNav("historial")} />
+              <QuickAccessCard icon={<MessageCircle className="h-5 w-5" strokeWidth={2.25} />} title="Chat con Veterinario" description="Consultas en línea" onClick={() => setActiveNav("mensajes")} />
             </div>
           </>
         );
@@ -155,7 +167,7 @@ export function OwnerDashboardPage({ onLogout, currentUser, onPhotoChange }) {
   if (isLoading) {
     return (
       <DashboardLayout subtitle="Gestión de Mascotas" roleLabel="Dueño" roleIcon="🐶" photoUrl={currentUser?.photoUrl} navItems={OWNER_NAV} activeNav={activeNav} onNavigate={setActiveNav} onLogout={onLogout}>
-        <p className="text-text-muted">Cargando datos...</p>
+        <LoadingState />
       </DashboardLayout>
     );
   }
@@ -165,33 +177,58 @@ export function OwnerDashboardPage({ onLogout, currentUser, onPhotoChange }) {
       {loadError && <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">No se pudieron cargar los datos: {loadError}</div>}
       {activeNav === "inicio" && (
         <>
-          <div className="mb-6 flex items-center justify-between">
-            <div><h1 className="text-2xl font-bold text-text-dark">🏠 Inicio</h1><p className="text-text-muted">Resumen de tus mascotas y citas</p></div>
-            <button onClick={() => setActiveNav("citas")} className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-primary-dark">+ Nueva Cita</button>
+          <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-primary-dark px-6 py-7 text-white shadow-soft sm:px-8">
+            <div className="pointer-events-none absolute -right-10 -top-16 h-64 w-64 animate-float-slow rounded-full bg-white/20 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-20 right-24 h-48 w-48 animate-float-slower rounded-full bg-white/20 blur-2xl" />
+            <div className="relative flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/70">{formatToday()}</p>
+                <h1 className="mt-1 font-display text-3xl font-semibold leading-tight sm:text-4xl">
+                  ¡Hola, {firstName}! <span aria-hidden>🐾</span>
+                </h1>
+                <p className="mt-2 max-w-md text-sm text-white/80">
+                  Esto es lo que está pasando hoy con tus mascotas.
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveNav("citas")}
+                className="inline-flex w-fit items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary-dark shadow-lg transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0"
+              >
+                <Plus className="h-4 w-4" strokeWidth={2.5} />
+                Nueva Cita
+              </button>
+            </div>
           </div>
+
           {vaccineAlerts.length > 0 && (
-            <div className="mb-6 rounded-xl border border-yellow-300 bg-yellow-50 px-4 py-3">
-              <p className="mb-2 text-sm font-bold text-yellow-800">💉 Vacunas próximas</p>
-              <ul className="flex flex-col gap-1">
-                {vaccineAlerts.map((a) => (
-                  <li key={a.id} className="text-xs text-yellow-800">
-                    <strong>{a.petName}</strong>: {a.description || "Control"} —{" "}
-                    {a.daysLeft < 0
-                      ? `venció hace ${Math.abs(a.daysLeft)} día(s)`
-                      : a.daysLeft === 0
-                      ? "es hoy"
-                      : `en ${a.daysLeft} día(s)`}{" "}
-                    ({a.nextDate})
-                  </li>
-                ))}
-              </ul>
+            <div className="mb-6 flex items-start gap-3 rounded-xl border border-yellow-300 bg-yellow-50 px-4 py-4 shadow-card">
+              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-yellow-200 text-yellow-800">
+                <Syringe className="h-4 w-4" strokeWidth={2.25} />
+              </span>
+              <div className="flex-1">
+                <p className="mb-1.5 text-sm font-bold text-yellow-800">Vacunas próximas</p>
+                <ul className="flex flex-col gap-1">
+                  {vaccineAlerts.map((a) => (
+                    <li key={a.id} className="text-xs text-yellow-800">
+                      <strong>{a.petName}</strong>: {a.description || "Control"} —{" "}
+                      {a.daysLeft < 0
+                        ? `venció hace ${Math.abs(a.daysLeft)} día(s)`
+                        : a.daysLeft === 0
+                        ? "es hoy"
+                        : `en ${a.daysLeft} día(s)`}{" "}
+                      ({a.nextDate})
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
-          <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <StatCard value={pets.length} label="Mis Mascotas" accent="orange" />
-            <StatCard value={appointments.length} label="Cita Próxima" accent="yellow" />
-            <StatCard value={pets.filter((p) => p.status === PET_STATUS.ACTIVE).length} label="Vacunas al día" accent="green" />
-            <StatCard value={vaccineAlerts.length} label="Vacunas Pendientes" accent="blue" />
+
+          <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <StatCard icon={PawPrint} value={pets.length} label="Mis Mascotas" accent="orange" />
+            <StatCard icon={CalendarClock} value={appointments.length} label="Cita Próxima" accent="yellow" />
+            <StatCard icon={ShieldCheck} value={pets.filter((p) => p.status === PET_STATUS.ACTIVE).length} label="Vacunas al día" accent="green" />
+            <StatCard icon={Syringe} value={vaccineAlerts.length} label="Vacunas Pendientes" accent="blue" />
           </div>
         </>
       )}

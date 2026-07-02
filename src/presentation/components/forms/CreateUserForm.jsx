@@ -77,20 +77,21 @@ export function CreateUserForm({ initialUsers, currentUserId }) {
           {filteredUsers.length === 0 && (
             <p className="text-xs text-text-muted">No se encontraron usuarios.</p>
           )}
-          {filteredUsers.map((u) => (
-            <UserListItem
-              key={u.id}
-              icon={u.role === "veterinario" ? "🩺" : "👤"}
-              name={u.name}
-              subtitle={u.subtitle}
-              role={u.role}
-              email={u.email}
-              document={u.document}
-              phone={u.phone}
-              onUpdate={(payload) => handleUpdate(u.id, payload)}
-              onDelete={() => handleDelete(u.id)}
-              disableDelete={String(u.id) === String(currentUserId)}
-            />
+          {filteredUsers.map((u, i) => (
+            <div key={u.id} className="animate-fade-in-up" style={{ animationDelay: `${Math.min(i * 90, 450)}ms` }}>
+              <UserListItem
+                icon={u.role === "veterinario" ? "🩺" : "👤"}
+                name={u.name}
+                subtitle={u.subtitle}
+                role={u.role}
+                email={u.email}
+                document={u.document}
+                phone={u.phone}
+                onUpdate={(payload) => handleUpdate(u.id, payload)}
+                onDelete={() => handleDelete(u.id)}
+                disableDelete={String(u.id) === String(currentUserId)}
+              />
+            </div>
           ))}
         </div>
       </div>

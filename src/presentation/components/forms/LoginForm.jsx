@@ -1,5 +1,6 @@
 // src/presentation/components/forms/LoginForm.jsx
 import { useEffect, useRef } from "react";
+import { PawPrint, Stethoscope, ShieldCheck } from "lucide-react";
 import { useLogin } from "../../../application/hooks/useLogin";
 import { ROLES } from "../../../domain/entities/User";
 import { authRepository } from "../../../infrastructure/repositories/authRepository";
@@ -10,9 +11,9 @@ import { Button } from "../ui/Button";
 const GOOGLE_CLIENT_ID = "840053752885-ume640ihe181dnmj473vnbq8c0egks6o.apps.googleusercontent.com";
 
 const ROLE_OPTIONS = [
-  { value: ROLES.OWNER, label: "Dueño", icon: "🐶" },
-  { value: ROLES.VET, label: "Veterinario", icon: "🩺" },
-  { value: ROLES.ADMIN, label: "Admin", icon: "🛡️" },
+  { value: ROLES.OWNER, label: "Dueño", icon: PawPrint },
+  { value: ROLES.VET, label: "Veterinario", icon: Stethoscope },
+  { value: ROLES.ADMIN, label: "Admin", icon: ShieldCheck },
 ];
 
 export function LoginForm({ onLoginSuccess, onGoToRegister }) {
@@ -47,7 +48,7 @@ export function LoginForm({ onLoginSuccess, onGoToRegister }) {
       window.google.accounts.id.renderButton(googleButtonRef.current, {
         theme: "outline",
         size: "large",
-        width: 400,
+        width: 380,
         text: "continue_with",
         locale: "es",
       });
@@ -70,15 +71,16 @@ export function LoginForm({ onLoginSuccess, onGoToRegister }) {
   }, [onLoginSuccess]);
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4 rounded-2xl border border-border bg-white p-6 shadow-soft-lg">
       <div>
-        <h1 className="text-2xl font-bold text-text-dark">
+        <h1 className="font-display text-3xl font-semibold leading-tight text-text-dark">
           Iniciar sesión en <span className="text-primary">Adoptasoft</span>
         </h1>
+        <p className="mt-1 text-sm text-text-muted">Bienvenido de nuevo, ingresa tus datos.</p>
       </div>
 
       <div>
-        <p className="mb-3 text-xs font-semibold tracking-wide text-text-dark">
+        <p className="mb-3 text-xs font-semibold tracking-wide text-text-muted">
           SELECCIONA TU PERFIL
         </p>
         <div className="flex gap-3">

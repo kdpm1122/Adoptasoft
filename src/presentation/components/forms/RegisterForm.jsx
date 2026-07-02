@@ -44,9 +44,9 @@ export function RegisterForm({ onRegisterSuccess, onBackToLogin }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4 rounded-2xl border border-border bg-white p-6 shadow-soft-lg">
       <div>
-        <h1 className="text-2xl font-bold text-text-dark">
+        <h1 className="font-display text-3xl font-semibold leading-tight text-text-dark">
           Crear cuenta en <span className="text-primary">Adoptasoft</span>
         </h1>
         <p className="mt-1 text-sm text-text-muted">Este registro es para perfil de Dueño 🐶.</p>

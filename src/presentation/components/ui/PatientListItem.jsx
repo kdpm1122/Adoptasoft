@@ -1,5 +1,6 @@
 // src/presentation/components/ui/PatientListItem.jsx
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { StatusToggle } from "./StatusToggle";
 
 const SPECIES_ICON = { Perro: "🐶", Gato: "🐱", Ave: "🐦", Roedor: "🐹", Reptil: "🦎", Otro: "🐾" };
@@ -8,7 +9,7 @@ export function PatientListItem({ patient, onChangeStatus, onViewHistory }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-xl border border-border bg-white px-4 py-3 shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-warm-cream text-xl">
           {patient.photoUrl ? (
@@ -46,7 +47,7 @@ export function PatientListItem({ patient, onChangeStatus, onViewHistory }) {
         </button>
       </div>
 
-      {lightboxOpen && patient.photoUrl && (
+      {lightboxOpen && patient.photoUrl && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6"
           onClick={() => setLightboxOpen(false)}
@@ -64,7 +65,8 @@ export function PatientListItem({ patient, onChangeStatus, onViewHistory }) {
           >
             ✕ Cerrar
           </button>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

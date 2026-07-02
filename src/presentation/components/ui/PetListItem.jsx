@@ -1,5 +1,6 @@
 // src/presentation/components/ui/PetListItem.jsx
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { StatusBadge } from "./StatusBadge";
 import { resizeImageToBase64 } from "../../../shared/utils/imageResize";
 
@@ -7,10 +8,18 @@ const SPECIES_ICON = { Perro: "🐶", Gato: "🐱", Ave: "🐦", Roedor: "🐹",
 
 export function PetListItem({ pet, onUploadPhoto }) {
   const fileInputRef = useRef(null);
+  const avatarBtnRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  function openMenu() {
+    const rect = avatarBtnRef.current?.getBoundingClientRect();
+    if (rect) setMenuPos({ top: rect.bottom + 4, left: rect.left });
+    setMenuOpen(true);
+  }
 
   async function handleFileChange(e) {
     const file = e.target.files?.[0];
@@ -29,12 +38,13 @@ export function PetListItem({ pet, onUploadPhoto }) {
   }
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-border bg-white px-4 py-3">
+    <div className="flex items-center justify-between rounded-xl border border-border bg-white px-4 py-3 shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover">
       <div className="flex items-center gap-3">
         <div className="relative">
           <button
+            ref={avatarBtnRef}
             type="button"
-            onClick={() => onUploadPhoto && setMenuOpen((v) => !v)}
+            onClick={() => onUploadPhoto && (menuOpen ? setMenuOpen(false) : openMenu())}
             disabled={isUploading}
             className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-warm-cream text-xl
               ${onUploadPhoto ? "cursor-pointer hover:ring-2 hover:ring-primary-light" : ""}`}
@@ -51,10 +61,13 @@ export function PetListItem({ pet, onUploadPhoto }) {
             )}
           </button>
 
-          {menuOpen && (
+          {menuOpen && createPortal(
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-              <div className="absolute left-0 top-full z-20 mt-1 w-36 overflow-hidden rounded-lg border border-border bg-white shadow-lg">
+              <div className="fixed inset-0 z-[9998]" onClick={() => setMenuOpen(false)} />
+              <div
+                style={{ position: "fixed", top: menuPos.top, left: menuPos.left }}
+                className="z-[9999] w-36 overflow-hidden rounded-lg border border-border bg-white shadow-lg"
+              >
                 {pet.photoUrl && (
                   <button
                     type="button"
@@ -72,7 +85,8 @@ export function PetListItem({ pet, onUploadPhoto }) {
                   📷 Cambiar foto
                 </button>
               </div>
-            </>
+            </>,
+            document.body
           )}
         </div>
 
@@ -93,9 +107,9 @@ export function PetListItem({ pet, onUploadPhoto }) {
       </div>
       <StatusBadge status={pet.status} />
 
-      {lightboxOpen && pet.photoUrl && (
+      {lightboxOpen && pet.photoUrl && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-6"
           onClick={() => setLightboxOpen(false)}
         >
           <img
@@ -111,7 +125,8 @@ export function PetListItem({ pet, onUploadPhoto }) {
           >
             ✕ Cerrar
           </button>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

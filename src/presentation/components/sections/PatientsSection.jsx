@@ -1,6 +1,7 @@
 // src/presentation/components/sections/PatientsSection.jsx
 import { useMemo, useState } from "react";
 import { PatientListItem } from "../ui/PatientListItem";
+import { EmptyState } from "../ui/EmptyState";
 
 export function PatientsSection({ patients, onChangeStatus, onViewHistory }) {
   const [query, setQuery] = useState("");
@@ -37,17 +38,16 @@ export function PatientsSection({ patients, onChangeStatus, onViewHistory }) {
 
       <div className="flex flex-col gap-3">
         {filtered.length === 0 && (
-          <p className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-text-muted">
-            No se encontraron pacientes.
-          </p>
+          <EmptyState title="No se encontraron pacientes" description="Prueba con otro nombre o el del dueño." />
         )}
-        {filtered.map((patient) => (
-          <PatientListItem
-            key={patient.id}
-            patient={patient}
-            onChangeStatus={onChangeStatus}
-            onViewHistory={onViewHistory}
-          />
+        {filtered.map((patient, i) => (
+          <div key={patient.id} className="animate-fade-in-up" style={{ animationDelay: `${Math.min(i * 90, 450)}ms` }}>
+            <PatientListItem
+              patient={patient}
+              onChangeStatus={onChangeStatus}
+              onViewHistory={onViewHistory}
+            />
+          </div>
         ))}
       </div>
     </div>

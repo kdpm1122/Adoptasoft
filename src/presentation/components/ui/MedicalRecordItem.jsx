@@ -10,7 +10,7 @@ const ICONS = { vacuna: "💉", diagnostico: "🩺", control: "🗒️" };
 
 export function MedicalRecordItem({ record }) {
   return (
-    <div className={`rounded-xl border-l-4 bg-white px-4 py-3 shadow-sm ${ACCENTS[record.type] || "border-l-gray-300"}`}>
+    <div className={`rounded-xl border-l-4 bg-white px-4 py-3 shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover ${ACCENTS[record.type] || "border-l-gray-300"}`}>
       <p className="font-semibold text-text-dark">
         {ICONS[record.type] || "📋"} {record.title}
       </p>
