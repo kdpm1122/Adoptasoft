@@ -12,6 +12,7 @@ const handlers = {
   cambiar_password: require('../../handlers/usuarios/cambiar_password'),
   registrar: require('../../handlers/usuarios/registrar'),
   actualizar_foto: require('../../handlers/usuarios/actualizar_foto'),
+  admin_reset_password: require('../../handlers/usuarios/admin_reset_password'),
 };
 
 module.exports = async (req, res) => {

@@ -3,12 +3,13 @@ import { useState } from "react";
 import { ShieldCheck, HeartHandshake, Clock3 } from "lucide-react";
 import { LoginForm } from "../components/forms/LoginForm";
 import { RegisterForm } from "../components/forms/RegisterForm";
+import { ForgotPasswordForm } from "../components/forms/ForgotPasswordForm";
 import logo from "../../assets/logo.jpeg";
 
 const PAW_PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23D9711A'%3E%3Cellipse cx='50' cy='66' rx='16' ry='12'/%3E%3Ccircle cx='30' cy='38' r='7'/%3E%3Ccircle cx='46' cy='24' r='7'/%3E%3Ccircle cx='64' cy='24' r='7'/%3E%3Ccircle cx='80' cy='38' r='7'/%3E%3C/g%3E%3C/svg%3E")`;
 
 export function LoginPage({ onLoginSuccess }) {
-  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [mode, setMode] = useState("login"); // "login" | "register" | "forgot"
 
   return (
     <div className="relative flex min-h-screen w-full items-center overflow-hidden bg-warm-bg px-6 py-6 md:px-16">
@@ -93,10 +94,18 @@ export function LoginPage({ onLoginSuccess }) {
 
         {/* Derecha: tarjeta de login */}
         <div key={mode} className="w-full max-w-md flex-shrink-0 animate-fade-in-up md:ml-auto">
-          {mode === "login" ? (
-            <LoginForm onLoginSuccess={onLoginSuccess} onGoToRegister={() => setMode("register")} />
-          ) : (
+          {mode === "login" && (
+            <LoginForm
+              onLoginSuccess={onLoginSuccess}
+              onGoToRegister={() => setMode("register")}
+              onForgotPassword={() => setMode("forgot")}
+            />
+          )}
+          {mode === "register" && (
             <RegisterForm onRegisterSuccess={onLoginSuccess} onBackToLogin={() => setMode("login")} />
+          )}
+          {mode === "forgot" && (
+            <ForgotPasswordForm onBackToLogin={() => setMode("login")} />
           )}
         </div>
       </div>

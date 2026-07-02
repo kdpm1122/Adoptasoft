@@ -5,6 +5,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "google-auth-library": "^10.9.0",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "resend": "^6.16.0"
   }
 }

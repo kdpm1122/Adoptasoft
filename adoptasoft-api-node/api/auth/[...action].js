@@ -8,6 +8,8 @@ const handlers = {
   login: require('../../handlers/auth/login'),
   logout: require('../../handlers/auth/logout'),
   google: require('../../handlers/auth/google'),
+  forgot_password: require('../../handlers/auth/forgot_password'),
+  reset_password: require('../../handlers/auth/reset_password'),
 };
 
 module.exports = async (req, res) => {

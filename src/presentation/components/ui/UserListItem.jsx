@@ -22,7 +22,7 @@ function Field({ label, children }) {
   );
 }
 
-export function UserListItem({ id, icon, name, subtitle, role, email, document, phone, onDelete, onUpdate, disableDelete }) {
+export function UserListItem({ id, icon, name, subtitle, role, email, document, phone, onDelete, onUpdate, onResetPassword, disableDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -33,6 +33,12 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
     phone: phone || "",
     role: role || "dueño",
   });
+
+  const [isResetting, setIsResetting] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [resetSaving, setResetSaving] = useState(false);
+  const [resetError, setResetError] = useState(null);
+  const [resetDone, setResetDone] = useState(false);
 
   function handleDelete() {
     if (window.confirm(`¿Eliminar la cuenta de ${name}? Esta acción no se puede deshacer.`)) {
@@ -59,9 +65,34 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
     setError(null);
   }
 
+  async function handleResetPassword() {
+    if (newPassword.length < 6) {
+      setResetError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+    setResetSaving(true);
+    setResetError(null);
+    try {
+      await onResetPassword?.(newPassword);
+      setResetDone(true);
+      setNewPassword("");
+    } catch (err) {
+      setResetError(err.message);
+    } finally {
+      setResetSaving(false);
+    }
+  }
+
+  function handleCancelReset() {
+    setIsResetting(false);
+    setNewPassword("");
+    setResetError(null);
+    setResetDone(false);
+  }
+
   if (isEditing) {
     return (
-      <div className="rounded-xl border border-primary-light bg-warm-cream/50 px-4 py-3 shadow-card">
+      <div className="rounded-xl border border-primary-light bg-warm-cream/50 px-4 py-3">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
           <Field label="Nombre">
             <input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })}
@@ -94,7 +125,7 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
             Cancelar
           </button>
           <button type="button" onClick={handleSave} disabled={isSaving}
-            className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white shadow-soft hover:bg-primary-dark hover:shadow-soft-lg disabled:opacity-60">
+            className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary-dark disabled:opacity-60">
             {isSaving ? "Guardando..." : "Guardar"}
           </button>
         </div>
@@ -102,8 +133,46 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
     );
   }
 
+  if (isResetting) {
+    return (
+      <div className="rounded-xl border border-primary-light bg-warm-cream/50 px-4 py-3">
+        <p className="mb-2 text-xs font-semibold text-text-dark">🔑 Restablecer contraseña de {name}</p>
+        {resetDone ? (
+          <>
+            <p className="text-xs text-green-600">Contraseña actualizada correctamente.</p>
+            <div className="mt-2 flex justify-end">
+              <button type="button" onClick={handleCancelReset} className="rounded-lg border border-border px-3 py-1 text-xs text-text-muted hover:bg-white">
+                Cerrar
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Nueva contraseña (mínimo 6 caracteres)"
+              className="w-full rounded-lg border border-border px-2 py-1 text-xs"
+            />
+            {resetError && <p className="mt-1 text-xs text-red-500">{resetError}</p>}
+            <div className="mt-2 flex justify-end gap-2">
+              <button type="button" onClick={handleCancelReset} className="rounded-lg border border-border px-3 py-1 text-xs text-text-muted hover:bg-white">
+                Cancelar
+              </button>
+              <button type="button" onClick={handleResetPassword} disabled={resetSaving}
+                className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-white hover:bg-primary-dark disabled:opacity-60">
+                {resetSaving ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center justify-between rounded-xl border border-border bg-white px-4 py-3 shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover">
+    <div className="flex items-center justify-between rounded-xl border border-border px-4 py-3">
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-warm-cream text-lg">
           {icon}
@@ -121,6 +190,12 @@ export function UserListItem({ id, icon, name, subtitle, role, email, document, 
           <button type="button" onClick={() => setIsEditing(true)} title="Editar usuario"
             className="rounded-lg border border-border px-2 py-1 text-xs font-semibold text-text-dark hover:bg-warm-cream">
             ✏️
+          </button>
+        )}
+        {onResetPassword && (
+          <button type="button" onClick={() => setIsResetting(true)} title="Restablecer contraseña"
+            className="rounded-lg border border-border px-2 py-1 text-xs font-semibold text-text-dark hover:bg-warm-cream">
+            🔑
           </button>
         )}
         {onDelete && (

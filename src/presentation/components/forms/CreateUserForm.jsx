@@ -1,5 +1,6 @@
 // src/presentation/components/forms/CreateUserForm.jsx
 import { useState } from "react";
+import { userRepository } from "../../../infrastructure/repositories/userRepository";
 import { useUserManagement } from "../../../application/hooks/useUserManagement";
 import { ROLES } from "../../../domain/entities/User";
 import { TextField } from "../ui/TextField";
@@ -18,6 +19,10 @@ export function CreateUserForm({ initialUsers, currentUserId }) {
 
   async function handleUpdate(id, payload) {
     return updateUser(id, payload);
+  }
+
+  async function handleResetPassword(id, newPassword) {
+    return userRepository.adminResetPassword(id, newPassword);
   }
 
   async function handleDelete(id) {
@@ -88,6 +93,7 @@ export function CreateUserForm({ initialUsers, currentUserId }) {
                 document={u.document}
                 phone={u.phone}
                 onUpdate={(payload) => handleUpdate(u.id, payload)}
+                onResetPassword={(newPassword) => handleResetPassword(u.id, newPassword)}
                 onDelete={() => handleDelete(u.id)}
                 disableDelete={String(u.id) === String(currentUserId)}
               />

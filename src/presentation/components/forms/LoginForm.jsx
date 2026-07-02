@@ -16,7 +16,7 @@ const ROLE_OPTIONS = [
   { value: ROLES.ADMIN, label: "Admin", icon: ShieldCheck },
 ];
 
-export function LoginForm({ onLoginSuccess, onGoToRegister }) {
+export function LoginForm({ onLoginSuccess, onGoToRegister, onForgotPassword }) {
   const { formData, setField, errors, isLoading, apiError, submit } = useLogin();
   const googleButtonRef = useRef(null);
 
@@ -120,9 +120,9 @@ export function LoginForm({ onLoginSuccess, onGoToRegister }) {
         Iniciar sesión
       </Button>
 
-      <a href="/forgot-password" className="text-center text-sm font-medium text-primary hover:underline">
+      <button type="button" onClick={onForgotPassword} className="text-center text-sm font-medium text-primary hover:underline">
         ¿Olvidaste tu contraseña?
-      </a>
+      </button>
 
       <div className="flex items-center gap-3 text-xs text-text-muted">
         <span className="h-px flex-1 bg-border" />

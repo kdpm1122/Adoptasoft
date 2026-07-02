@@ -164,3 +164,59 @@ y saludo, tarjetas de estadísticas con ícono (`Users`, `Stethoscope`,
 
 **Con esto, los 3 roles (Dueño, Veterinario, Administrador) quedan con el
 mismo lenguaje visual.**
+
+---
+
+## 8. Estados vacíos y de carga en los 3 roles
+
+**Cambios:**
+- Nuevo componente `LoadingState.jsx`: loader con 3 puntos animados,
+  reemplaza el texto plano "Cargando datos..." en Dueño, Veterinario y Admin.
+- Nuevo componente `EmptyState.jsx`: ícono + título + descripción,
+  reemplaza mensajes de "vacío" sueltos (agenda sin citas, sin mascotas,
+  sin pacientes encontrados, sin veterinarios registrados).
+
+**Archivos:** `src/presentation/components/ui/LoadingState.jsx`,
+`src/presentation/components/ui/EmptyState.jsx`, y los 3 `*DashboardPage.jsx`
++ `PetsSection.jsx`, `PatientsSection.jsx`, `VeterinariansSection.jsx`.
+
+---
+
+## 9. Rediseño de Login / Registro
+
+**Objetivo:** Que la pantalla de acceso tuviera el mismo nivel visual que
+el resto de la app, sin romper la lógica de autenticación (roles, Google
+login, validaciones) que ya funcionaba.
+
+**Cambios principales:**
+- Layout de una sola columna con fondo pastel continuo (sin corte de color
+  a la mitad de la pantalla): logo + texto centrados a la izquierda,
+  tarjeta de login flotando a la derecha — inspirado en el estilo de
+  Facebook.
+- Logo dentro de un círculo con aro naranja degradado, con un patrón sutil
+  de patitas en diagonal de fondo (`opacity-[0.09]`) para dar textura sin
+  competir visualmente con el contenido.
+- Textos y tamaños con `clamp()` en vez de unidades fijas o 100% `vh`, para
+  que el diseño se ajuste suave entre distintos tamaños de pantalla en vez
+  de saltar bruscamente o desbordarse.
+- `TextField` y `RoleCard` rediseñados: inputs con mejor foco (anillo +
+  borde), tarjetas de rol con íconos reales de `lucide-react` y check de
+  seleccionado.
+- `LoginForm` y `RegisterForm` ahora viven dentro de una tarjeta con borde
+  y sombra (`shadow-soft-lg`), en vez de flotar sueltos sobre el fondo.
+
+**Archivos:** `src/presentation/pages/LoginPage.jsx`,
+`src/presentation/components/forms/LoginForm.jsx`,
+`src/presentation/components/forms/RegisterForm.jsx`,
+`src/presentation/components/ui/TextField.jsx`,
+`src/presentation/components/ui/RoleCard.jsx`.
+
+---
+
+## Pendiente
+
+- [ ] Pulir el registro para roles Veterinario/Admin (actualmente el
+      formulario de registro solo cubre perfil de Dueño).
+- [ ] Revisar el recorte del logo circular en pantallas muy angostas
+      (móvil) — confirmar que el ícono perro/gato se vea centrado.
+- [ ] Animaciones y micro-interacciones adicionales en el resto de la app.

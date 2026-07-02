@@ -83,6 +83,14 @@ export const authRepository = {
     localStorage.removeItem(USER_KEY);
   },
 
+  async forgotPassword(email) {
+    return httpClient.post("/auth/forgot_password", { email });
+  },
+
+  async resetPassword({ token, newPassword }) {
+    return httpClient.post("/auth/reset_password", { token, newPassword });
+  },
+
   getStoredUser,
   saveUser,
 };
