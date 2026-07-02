@@ -105,8 +105,6 @@ export function AdminDashboardPage({ onLogout, currentUser }) {
             <QuickAccessCard icon="👥" title="Gestión de Usuarios" description="Crear, editar, suspender" highlighted onClick={() => setActiveNav("usuarios")} />
             <QuickAccessCard icon="🩺" title="Veterinarios" description="Gestionar especialistas" onClick={() => setActiveNav("veterinarios")} />
             <QuickAccessCard icon="📊" title="Reportes Globales" description="Estadísticas del sistema" onClick={() => setActiveNav("reportes")} />
-            <QuickAccessCard icon="⚙️" title="Configuración" description="Sistema y seguridad" />
-            <QuickAccessCard icon="🔔" title="Notificaciones del Sistema" description="Alertas y avisos" badge={3} />
           </div>
         </>
       )}

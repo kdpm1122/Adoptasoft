@@ -2,7 +2,7 @@
 import { AppointmentForm } from "../forms/AppointmentForm";
 import { AppointmentListItem } from "../ui/AppointmentListItem";
 
-export function AppointmentsSection({ pets, vets, appointments, takenSlots, onConfirm, canRate, onRated }) {
+export function AppointmentsSection({ pets, vets, appointments, onConfirm, canRate, onRated }) {
   return (
     <div>
       <div className="mb-4">
@@ -10,7 +10,7 @@ export function AppointmentsSection({ pets, vets, appointments, takenSlots, onCo
         <p className="text-sm text-text-muted">Agenda y administra tus citas veterinarias</p>
       </div>
 
-      <AppointmentForm pets={pets} vets={vets} takenSlots={takenSlots} onConfirm={onConfirm} />
+      <AppointmentForm pets={pets} vets={vets} onConfirm={onConfirm} />
 
       <p className="mb-2 mt-6 text-xs font-semibold tracking-wide text-text-muted">MIS CITAS</p>
       <div className="flex flex-col gap-3">

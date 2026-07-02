@@ -39,6 +39,7 @@ export function OwnerDashboardPage({ onLogout, currentUser }) {
   const [vets, setVets] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [records, setRecords] = useState([]);
+  const [selectedPetId, setSelectedPetId] = useState("");
   const [vaccineAlerts, setVaccineAlerts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
@@ -64,11 +65,16 @@ export function OwnerDashboardPage({ onLogout, currentUser }) {
   }, []);
 
   useEffect(() => {
-    if (!pets[0]?.id) return;
-    let cancelled = false;
-    medicalRecordRepository.list(pets[0].id).then((data) => { if (!cancelled) setRecords(data.map(toRecordViewModel)); }).catch((err) => { if (!cancelled) setLoadError(err.message); });
-    return () => { cancelled = true; };
+    if (pets.length === 0) { setSelectedPetId(""); return; }
+    setSelectedPetId((prev) => (prev && pets.some((p) => String(p.id) === String(prev)) ? prev : String(pets[0].id)));
   }, [pets]);
+
+  useEffect(() => {
+    if (!selectedPetId) { setRecords([]); return; }
+    let cancelled = false;
+    medicalRecordRepository.list(selectedPetId).then((data) => { if (!cancelled) setRecords(data.map(toRecordViewModel)); }).catch((err) => { if (!cancelled) setLoadError(err.message); });
+    return () => { cancelled = true; };
+  }, [selectedPetId]);
 
   useEffect(() => {
     if (pets.length === 0) return;
@@ -109,21 +115,26 @@ export function OwnerDashboardPage({ onLogout, currentUser }) {
     setAppointments((prev) => [{ ...created, petName: pet?.name || "Mascota", vetName: vet?.name || "Por asignar" }, ...prev]);
   }
 
+  const selectedPet = pets.find((p) => String(p.id) === String(selectedPetId));
+
   function renderSection() {
     switch (activeNav) {
       case "mascotas": return <PetsSection pets={pets} onCreatePet={handleCreatePet} onUploadPhoto={handleUploadPetPhoto} />;
-      case "citas": return <AppointmentsSection pets={pets} vets={vets} appointments={appointments} takenSlots={appointments.map((a) => a.time)} onConfirm={handleConfirmAppointment} canRate onRated={(id, stars) => setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, rating: stars } : a)))} />;
+      case "citas": return <AppointmentsSection pets={pets} vets={vets} appointments={appointments} onConfirm={handleConfirmAppointment} canRate onRated={(id, stars) => setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, rating: stars } : a)))} />;
       case "perfil": return <ProfileSection user={currentUser} />;
       case "mensajes":
         return <MessagesSection contacts={vets.map((v) => ({ id: v.id, name: v.name, role: "vet" }))} />;
       case "historial":
         return (
           <MedicalHistorySection
-            petName={`${pets[0]?.name || ""} — ${pets[0]?.breed || ""}`}
+            pets={pets}
+            selectedPetId={selectedPetId}
+            onPetChange={setSelectedPetId}
+            petName={`${selectedPet?.name || ""} — ${selectedPet?.breed || ""}`}
             records={records}
-            onExportPdf={() => exportToPdf(`${pets[0]?.name || "mascota"} — ${pets[0]?.breed || ""}`, records)}
-            onExportWord={() => exportToWord(`${pets[0]?.name || "mascota"} — ${pets[0]?.breed || ""}`, records)}
-            onShare={() => { if (navigator.share) { navigator.share({ title: `Historial de ${pets[0]?.name}`, text: "Historial médico generado desde Adoptasoft." });} else { navigator.clipboard.writeText(window.location.href); alert("Enlace copiado al portapapeles."); } }}
+            onExportPdf={() => exportToPdf(`${selectedPet?.name || "mascota"} — ${selectedPet?.breed || ""}`, records)}
+            onExportWord={() => exportToWord(`${selectedPet?.name || "mascota"} — ${selectedPet?.breed || ""}`, records)}
+            onShare={() => { if (navigator.share) { navigator.share({ title: `Historial de ${selectedPet?.name}`, text: "Historial médico generado desde Adoptasoft." });} else { navigator.clipboard.writeText(window.location.href); alert("Enlace copiado al portapapeles."); } }}
           />
         );
       default:

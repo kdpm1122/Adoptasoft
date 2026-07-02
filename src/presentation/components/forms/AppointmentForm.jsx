@@ -1,7 +1,8 @@
 // src/presentation/components/forms/AppointmentForm.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { validateAppointmentForm } from "../../../domain/services/appointmentValidation";
 import { CONSULTATION_TYPES } from "../../../domain/entities/Appointment";
+import { appointmentRepository } from "../../../infrastructure/repositories/appointmentRepository";
 import { TextField } from "../ui/TextField";
 import { Button } from "../ui/Button";
 import { TimeSlot } from "../ui/TimeSlot";
@@ -10,13 +11,32 @@ const ALL_SLOTS = ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00"
 
 const initialForm = { petId: "", vetId: "", type: "", date: "", reason: "", time: "" };
 
-export function AppointmentForm({ pets = [], vets = [], takenSlots = [], onConfirm }) {
+export function AppointmentForm({ pets = [], vets = [], onConfirm }) {
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
+  const [takenSlots, setTakenSlots] = useState([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [slotsError, setSlotsError] = useState(null);
 
   function setField(field, value) {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value, ...(field === "vetId" || field === "date" ? { time: "" } : {}) }));
   }
+
+  useEffect(() => {
+    if (!formData.vetId || !formData.date) {
+      setTakenSlots([]);
+      return;
+    }
+    let cancelled = false;
+    setIsLoadingSlots(true);
+    setSlotsError(null);
+    appointmentRepository
+      .getTakenSlots(formData.vetId, formData.date)
+      .then((slots) => { if (!cancelled) setTakenSlots(slots); })
+      .catch((err) => { if (!cancelled) setSlotsError(err.message); })
+      .finally(() => { if (!cancelled) setIsLoadingSlots(false); });
+    return () => { cancelled = true; };
+  }, [formData.vetId, formData.date]);
 
   function handleConfirm() {
     const { isValid, errors: validationErrors } = validateAppointmentForm(formData);
@@ -24,12 +44,16 @@ export function AppointmentForm({ pets = [], vets = [], takenSlots = [], onConfi
     if (!isValid) return;
     onConfirm?.(formData);
     setFormData(initialForm);
+    setTakenSlots([]);
   }
 
   function handleClear() {
     setFormData(initialForm);
     setErrors({});
+    setTakenSlots([]);
   }
+
+  const needsVetAndDate = !formData.vetId || !formData.date;
 
   return (
     <div className="rounded-xl bg-white p-6 shadow-sm">
@@ -98,18 +122,33 @@ export function AppointmentForm({ pets = [], vets = [], takenSlots = [], onConfi
 
       <p className="mb-2 mt-6 text-xs font-semibold tracking-wide text-text-muted">
         TURNOS DISPONIBLES {formData.vetId && vets.find((v) => v.id === formData.vetId) ? `· ${vets.find((v) => v.id === formData.vetId).name}` : ""}
+        {formData.date ? ` · ${formData.date}` : ""}
       </p>
-      <div className="mb-2 grid grid-cols-3 gap-2 md:grid-cols-5">
-        {ALL_SLOTS.map((slot) => (
-          <TimeSlot
-            key={slot}
-            time={slot}
-            isTaken={takenSlots.includes(slot)}
-            isSelected={formData.time === slot}
-            onClick={(t) => setField("time", t)}
-          />
-        ))}
-      </div>
+      {needsVetAndDate ? (
+        <p className="mb-2 rounded-lg border border-dashed border-border px-4 py-3 text-xs text-text-muted">
+          Selecciona veterinario y fecha para ver los turnos disponibles.
+        </p>
+      ) : isLoadingSlots ? (
+        <p className="mb-2 rounded-lg border border-dashed border-border px-4 py-3 text-xs text-text-muted">
+          Consultando disponibilidad...
+        </p>
+      ) : slotsError ? (
+        <p className="mb-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600">
+          No se pudo consultar la disponibilidad: {slotsError}
+        </p>
+      ) : (
+        <div className="mb-2 grid grid-cols-3 gap-2 md:grid-cols-5">
+          {ALL_SLOTS.map((slot) => (
+            <TimeSlot
+              key={slot}
+              time={slot}
+              isTaken={takenSlots.includes(slot)}
+              isSelected={formData.time === slot}
+              onClick={(t) => setField("time", t)}
+            />
+          ))}
+        </div>
+      )}
       {errors.time && <span className="text-xs text-red-500">{errors.time}</span>}
 
       <div className="mt-4 flex flex-col gap-2 md:flex-row">

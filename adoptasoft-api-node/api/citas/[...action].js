@@ -9,6 +9,7 @@ const handlers = {
   crear: require('../../handlers/citas/crear'),
   actualizar: require('../../handlers/citas/actualizar'),
   eliminar: require('../../handlers/citas/eliminar'),
+  turnos_ocupados: require('../../handlers/citas/turnos_ocupados'),
 };
 
 module.exports = async (req, res) => {

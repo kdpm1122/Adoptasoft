@@ -33,7 +33,7 @@ export function VetDashboardPage({ doctorName = "Dr.", onLogout, currentUser }) 
       try {
         const [petsData, appointmentsData] = await Promise.all([petRepository.list(), appointmentRepository.list()]);
         if (cancelled) return;
-        setPatients(petsData.map((p) => ({ id: p.id, name: p.name, species: p.species, breed: p.breed, ownerId: p.ownerId, ownerName: p.ownerName, status: p.status })));
+        setPatients(petsData.map((p) => ({ id: p.id, name: p.name, species: p.species, breed: p.breed, ownerId: p.ownerId, ownerName: p.ownerName, status: p.status, photoUrl: p.photoUrl })));
         setAppointments(appointmentsData);
       } catch (err) {
         if (!cancelled) setLoadError(err.message);
